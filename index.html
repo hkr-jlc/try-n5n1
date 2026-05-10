@@ -1,0 +1,264 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>TRY! N1-N5 - 文法から伸ばす日本語</title>
+    <link rel="stylesheet" href="style.css">
+    <style>
+        /* Level Selector Styles */
+        .level-selector-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, #f0f2f5 0%, #e5e7eb 100%);
+            z-index: 2000;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            transition: opacity 0.4s ease, visibility 0.4s ease;
+        }
+        .level-selector-overlay.hidden {
+            opacity: 0;
+            visibility: hidden;
+            pointer-events: none;
+        }
+        .level-selector-container {
+            text-align: center;
+            padding: 2rem;
+            max-width: 500px;
+            width: 100%;
+        }
+        .level-selector-title {
+            font-size: 2rem;
+            font-weight: 900;
+            color: #be123c;
+            margin-bottom: 0.5rem;
+        }
+        .level-selector-subtitle {
+            font-size: 1.125rem;
+            color: #6b7280;
+            margin-bottom: 2rem;
+        }
+        .level-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 0.75rem;
+            margin-bottom: 1.5rem;
+        }
+        .level-card {
+            display: flex;
+            align-items: center;
+            padding: 1.25rem 1.5rem;
+            background: white;
+            border-radius: 1rem;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+            cursor: pointer;
+            transition: all 0.2s ease;
+            border: 2px solid transparent;
+            text-align: left;
+        }
+        .level-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.12);
+            border-color: #be123c;
+        }
+        .level-card:active {
+            transform: scale(0.98);
+        }
+        .level-badge {
+            width: 3.5rem;
+            height: 3.5rem;
+            border-radius: 1rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 900;
+            font-size: 1.5rem;
+            color: white;
+            margin-right: 1rem;
+            flex-shrink: 0;
+        }
+        .level-badge.n5 { background: linear-gradient(135deg, #22c55e 0%, #16a34a 100%); }
+        .level-badge.n4 { background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%); }
+        .level-badge.n3 { background: linear-gradient(135deg, #a855f7 0%, #9333ea 100%); }
+        .level-badge.n2 { background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%); }
+        .level-badge.n1 { background: linear-gradient(135deg, #be123c 0%, #dc2626 100%); }
+        .level-info {
+            flex: 1;
+        }
+        .level-name {
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: #111827;
+            display: block;
+        }
+        .level-desc {
+            font-size: 0.875rem;
+            color: #6b7280;
+            margin-top: 0.25rem;
+        }
+        .level-arrow {
+            font-size: 1.25rem;
+            color: #9ca3af;
+            margin-left: 0.5rem;
+        }
+        .level-change-btn {
+            background: linear-gradient(135deg, #be123c 0%, #dc2626 100%);
+            color: white;
+            border: none;
+            padding: 0.625rem 1.25rem;
+            border-radius: 0.5rem;
+            font-size: 0.875rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            font-family: 'Noto Sans JP', sans-serif;
+        }
+        .level-change-btn:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(220, 38, 38, 0.35);
+        }
+
+        /* Adjust drawer header for level display */
+        .drawer-level-info {
+            font-size: 0.75rem;
+            opacity: 0.8;
+            margin-top: 0.25rem;
+            color: white;
+        }
+
+        /* Active level indicator in nav */
+        .nav-level-indicator {
+            position: absolute;
+            bottom: -0.25rem;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 0.625rem;
+            font-weight: 700;
+            color: #be123c;
+            background: #fef2f2;
+            padding: 0.125rem 0.5rem;
+            border-radius: 9999px;
+            white-space: nowrap;
+        }
+
+        @media (max-width: 768px) {
+            .level-selector-container {
+                padding: 1.5rem;
+            }
+            .level-selector-title {
+                font-size: 1.625rem;
+            }
+            .level-card {
+                padding: 1rem 1.25rem;
+            }
+            .level-badge {
+                width: 3rem;
+                height: 3rem;
+                font-size: 1.25rem;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Level Selector Overlay -->
+    <div id="level-selector" class="level-selector-overlay">
+        <div class="level-selector-container">
+            <h1 class="level-selector-title">TRY! 日本語</h1>
+            <p class="level-selector-subtitle">文法から伸ばす日本語 | N1-N5</p>
+            <div class="level-grid">
+                <div class="level-card" onclick="selectLevel('n5')">
+                    <div class="level-badge n5">N5</div>
+                    <div class="level-info">
+                        <span class="level-name">TRY! N5</span>
+                        <span class="level-desc">初級 | Pemula</span>
+                    </div>
+                    <span class="level-arrow">→</span>
+                </div>
+                <div class="level-card" onclick="selectLevel('n4')">
+                    <div class="level-badge n4">N4</div>
+                    <div class="level-info">
+                        <span class="level-name">TRY! N4</span>
+                        <span class="level-desc">初中級 | Dasar-Menengah</span>
+                    </div>
+                    <span class="level-arrow">→</span>
+                </div>
+                <div class="level-card" onclick="selectLevel('n3')">
+                    <div class="level-badge n3">N3</div>
+                    <div class="level-info">
+                        <span class="level-name">TRY! N3</span>
+                        <span class="level-desc">中級 | Menengah</span>
+                    </div>
+                    <span class="level-arrow">→</span>
+                </div>
+                <div class="level-card" onclick="selectLevel('n2')">
+                    <div class="level-badge n2">N2</div>
+                    <div class="level-info">
+                        <span class="level-name">TRY! N2</span>
+                        <span class="level-desc">中上級 | Menengah-Lanjut</span>
+                    </div>
+                    <span class="level-arrow">→</span>
+                </div>
+                <div class="level-card" onclick="selectLevel('n1')">
+                    <div class="level-badge n1">N1</div>
+                    <div class="level-info">
+                        <span class="level-name">TRY! N1</span>
+                        <span class="level-desc">上級 | Lanjut</span>
+                    </div>
+                    <span class="level-arrow">→</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Overlay -->
+    <div id="drawer-overlay" class="drawer-overlay" onclick="closeDrawer()"></div>
+
+    <!-- Sidebar Drawer -->
+    <aside id="sidebar-drawer" class="sidebar-drawer">
+        <div class="drawer-header">
+            <div class="drawer-brand">
+                <div class="drawer-logo" id="drawer-logo">TRY!</div>
+                <div class="drawer-subtitle">文法から伸ばす日本語</div>
+                <div class="drawer-level-info" id="drawer-level-info">Pilih Level</div>
+            </div>
+            <button class="drawer-close" onclick="closeDrawer()">✕</button>
+        </div>
+        <div style="padding: 0.75rem 1rem; border-bottom: 1px solid #e5e7eb;">
+            <button class="level-change-btn" onclick="showLevelSelector()">
+                ← Pilih Level Lain
+            </button>
+        </div>
+        <div class="drawer-content" id="drawer-content"></div>
+    </aside>
+
+    <!-- Navigation -->
+    <nav class="top-nav">
+        <div class="nav-container">
+            <button type="button" class="hamburger-btn" onclick="toggleDrawer()">
+                <span class="hamburger-icon">☰</span>
+            </button>
+            <div class="nav-title" id="current-section-title">TRY!</div>
+            <div class="translate-buttons">
+                <button type="button" class="translate-btn" id="translate-en-btn" onclick="toggleEnglish()">
+                    <span class="translate-icon">🇬🇧</span>
+                    <span class="translate-text">EN</span>
+                </button>
+                <button type="button" class="translate-btn" id="translate-id-btn" onclick="toggleIndonesian()">
+                    <span class="translate-icon">🇮🇩</span>
+                    <span class="translate-text">ID</span>
+                </button>
+            </div>
+        </div>
+    </nav>
+
+    <div class="main-container" id="main-container"></div>
+
+    <script src="app.js"></script>
+</body>
+</html>
